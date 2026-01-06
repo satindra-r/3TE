@@ -1,5 +1,5 @@
-import { fill3DRect, print, sendData, setStatus } from './snippets/LearningWASM-6f958a70a1b921fe/helper.js';
-import * as __wbg_star0 from './snippets/LearningWASM-6f958a70a1b921fe/helper.js';
+import { fill3DRect, print, sendData, setStatus } from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
+import * as __wbg_star0 from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
 
 let wasm;
 
@@ -90,33 +90,15 @@ if (!('encodeInto' in cachedTextEncoder)) {
 
 let WASM_VECTOR_LEN = 0;
 
-export function beginConnection() {
-    wasm.beginConnection();
-}
-
-export function createRequest() {
-    wasm.createRequest();
-}
-
-export function createResponse() {
-    wasm.createResponse();
-}
-
-export function enableAI() {
-    wasm.enableAI();
-}
-
-export function handleAIMove() {
-    wasm.handleAIMove();
-}
-
 /**
- * @param {string} data
+ * @param {string} str
+ * @param {number} x
+ * @param {number} y
  */
-export function handleDataIn(data) {
-    const ptr0 = passStringToWasm0(data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+export function handleDataIn(str, x, y) {
+    const ptr0 = passStringToWasm0(str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
-    wasm.handleDataIn(ptr0, len0);
+    wasm.handleDataIn(ptr0, len0, x, y);
 }
 
 /**
@@ -190,20 +172,20 @@ function __wbg_get_imports() {
             wasm.__wbindgen_free(deferred0_0, deferred0_1, 1);
         }
     };
-    imports.wbg.__wbg_fill3DRect_a6e382bbc4359771 = function(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    imports.wbg.__wbg_fill3DRect_a6e0221a354383a6 = function(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
         fill3DRect(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 !== 0);
     };
     imports.wbg.__wbg_new_8a6f238a6ece86ea = function() {
         const ret = new Error();
         return ret;
     };
-    imports.wbg.__wbg_print_420430f2bcb97ec4 = function(arg0, arg1) {
+    imports.wbg.__wbg_print_7f11528d65c531e3 = function(arg0, arg1) {
         print(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbg_sendData_cc81790edc5cc61d = function(arg0, arg1) {
-        sendData(getStringFromWasm0(arg0, arg1));
+    imports.wbg.__wbg_sendData_70b3f2a1d5ed8dee = function(arg0, arg1, arg2, arg3) {
+        sendData(getStringFromWasm0(arg0, arg1), arg2, arg3);
     };
-    imports.wbg.__wbg_setStatus_dfd69ce5e507274a = function(arg0, arg1) {
+    imports.wbg.__wbg_setStatus_a8687e579970fac3 = function(arg0, arg1) {
         setStatus(getStringFromWasm0(arg0, arg1));
     };
     imports.wbg.__wbg_stack_0ed75d68575b0f3c = function(arg0, arg1) {
@@ -222,7 +204,7 @@ function __wbg_get_imports() {
         table.set(offset + 2, true);
         table.set(offset + 3, false);
     };
-    imports['./snippets/LearningWASM-6f958a70a1b921fe/helper.js'] = __wbg_star0;
+    imports['./snippets/LearningWASM-6f958a70a1b921fe/static/helper.js'] = __wbg_star0;
 
     return imports;
 }

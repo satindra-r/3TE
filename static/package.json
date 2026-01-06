@@ -1,0 +1,30 @@
+{
+  "name": "3te",
+  "version": "1.0.0",
+  "description": "tic tac toe game without draws over WebRTC",
+  "main": "helper.js",
+  "scripts": {
+    "build:wasm": "cd .. && wasm-pack build --target web",
+    "dev": "npm run build:wasm && vite",
+    "build": "npm run build:wasm && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satindra-r/3TE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/satindra-r/3TE/issues"
+  },
+  "homepage": "https://github.com/satindra-r/3TE#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.0"
+  }
+}

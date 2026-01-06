@@ -2,6 +2,7 @@ let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 let textArea = document.getElementById("text");
 let status = document.getElementById("status")
+let userId2Input = document.getElementById("userId2")
 
 let player = -1;
 
@@ -109,8 +110,19 @@ export function drawCircle(x, y, s, r, g, b, t) {
 	ctx.stroke();
 }
 
-export function sendData(data) {
-	console.log(data);
+export function sendData(message, x, y) {
+	if (supabase) {
+		supabase
+			.from("Communication")
+			.insert({
+				userId2: userId2Input.value,
+				message: message,
+				x: x,
+				y: y
+			})
+	} else {
+		console.log("Cant send message");
+	}
 }
 
 export function setStatus(data) {

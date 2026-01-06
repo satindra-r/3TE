@@ -1,12 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export const beginConnection: () => void;
-export const createRequest: () => void;
-export const createResponse: () => void;
-export const enableAI: () => void;
-export const handleAIMove: () => void;
-export const handleDataIn: (a: number, b: number) => void;
+export const handleDataIn: (a: number, b: number, c: number, d: number) => void;
 export const handleKeyDown: (a: number, b: number) => void;
 export const handleMouseClick: (a: number, b: number) => void;
 export const render: () => void;

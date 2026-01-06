@@ -1,17 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function beginConnection(): void;
-
-export function createRequest(): void;
-
-export function createResponse(): void;
-
-export function enableAI(): void;
-
-export function handleAIMove(): void;
-
-export function handleDataIn(data: string): void;
+export function handleDataIn(str: string, x: number, y: number): void;
 
 export function handleKeyDown(key: string): void;
 
@@ -25,12 +15,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly beginConnection: () => void;
-  readonly createRequest: () => void;
-  readonly createResponse: () => void;
-  readonly enableAI: () => void;
-  readonly handleAIMove: () => void;
-  readonly handleDataIn: (a: number, b: number) => void;
+  readonly handleDataIn: (a: number, b: number, c: number, d: number) => void;
   readonly handleKeyDown: (a: number, b: number) => void;
   readonly handleMouseClick: (a: number, b: number) => void;
   readonly render: () => void;

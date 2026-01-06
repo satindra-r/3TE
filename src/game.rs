@@ -20,9 +20,9 @@ pub static DIR8: [(i16, i16); 8] = [
 pub enum State {
 	Inactive,
 	Activatable,
-	Active(bool),
-	Cross(bool),
-	Circle(bool),
+	Active,
+	Cross,
+	Circle,
 }
 
 #[derive(Clone, Debug)]
@@ -50,76 +50,32 @@ impl Game {
 		self.setState(-2, 1, State::Activatable);
 
 		self.setState(-1, -2, State::Activatable);
-		self.setState(-1, -1, State::Active(true));
-		self.setState(-1, 0, State::Active(true));
-		self.setState(-1, 1, State::Active(true));
+		self.setState(-1, -1, State::Active);
+		self.setState(-1, 0, State::Active);
+		self.setState(-1, 1, State::Active);
 		self.setState(-1, 2, State::Activatable);
 
 		self.setState(0, -2, State::Activatable);
-		self.setState(0, -1, State::Active(true));
-		self.setState(0, 0, State::Active(true));
-		self.setState(0, 1, State::Active(true));
+		self.setState(0, -1, State::Active);
+		self.setState(0, 0, State::Active);
+		self.setState(0, 1, State::Active);
 		self.setState(0, 2, State::Activatable);
 
 		self.setState(1, -2, State::Activatable);
-		self.setState(1, -1, State::Active(true));
-		self.setState(1, 0, State::Active(true));
-		self.setState(1, 1, State::Active(true));
+		self.setState(1, -1, State::Active);
+		self.setState(1, 0, State::Active);
+		self.setState(1, 1, State::Active);
 		self.setState(1, 2, State::Activatable);
 
 		self.setState(2, -1, State::Activatable);
 		self.setState(2, 0, State::Activatable);
 		self.setState(2, 1, State::Activatable);
 	}
-	/*fn coordTransform(x: i16, y: i16) -> (usize, usize) {
-		let xVec;
-		let yVec;
-		if (x >= 0) {
-			xVec = 2 * x;
-		} else {
-			xVec = (-x * 2) - 1;
-		}
-		if (y >= 0) {
-			yVec = 2 * y;
-		} else {
-			yVec = (-y * 2) - 1;
-		}
-		(xVec as usize, yVec as usize)
-	}
-	pub fn revCoordTransform(xVec: usize, yVec: usize) -> (i16, i16) {
-		let x;
-		let y;
-		if (xVec % 2 == 0) {
-			x = xVec as i16 / 2;
-		} else {
-			x = 1 - (xVec as i16 / 2);
-		}
-		if (yVec % 2 == 0) {
-			y = yVec as i16 / 2;
-		} else {
-			y = 1 - (yVec as i16 / 2);
-		}
-		(x, y)
-	}*/
-	pub fn getState(&self, x: i16, y: i16) -> State {
-		/*let (xVec, yVec) = Self::coordTransform(x, y);
-		if (self.GameState.len() <= xVec || self.GameState[xVec].len() <= yVec) {
-			return State::Inactive;
-		}
-		self.GameState[xVec][yVec]*/
 
+	pub fn getState(&self, x: i16, y: i16) -> State {
 		*self.GameState.get(&(x, y)).unwrap_or(&State::Inactive)
 	}
 	fn setState(&mut self, x: i16, y: i16, s: State) {
-		/*let (xVec, yVec) = Self::coordTransform(x, y);
-		if (self.GameState.len() <= xVec) {
-			self.GameState.resize(xVec + 1, Vec::new());
-		}
-		if (self.GameState[xVec].len() <= yVec) {
-			self.GameState[xVec].resize(yVec + 1, State::Inactive);
-		}
-		self.GameState[xVec][yVec] = s;
-		*/
 		if (s != State::Inactive) {
 			self.GameState.insert((x, y), s);
 		} else {
@@ -130,10 +86,10 @@ impl Game {
 		let clickedState = self.getState(x, y);
 		let win;
 		match clickedState {
-			State::Cross(_) => {
+			State::Cross => {
 				win = 1;
 			}
-			State::Circle(_) => {
+			State::Circle => {
 				win = 2;
 			}
 			_ => {
@@ -168,7 +124,7 @@ impl Game {
 				if (currMove == 1 && player == 1 || currMove == 3 && player == 2) {
 					self.Move += 1;
 					self.Move %= 4;
-					self.setState(x, y, State::Active(true));
+					self.setState(x, y, State::Active);
 
 					for dir in DIR4.iter() {
 						match self.getState(x + dir.0, y + dir.1) {
@@ -190,7 +146,7 @@ impl Game {
 									}
 								}
 								if (neighbourActivate) {
-									self.setState(x + dir.0, y + dir.1, State::Active(false));
+									self.setState(x + dir.0, y + dir.1, State::Active);
 								}
 							}
 							_ => {}
@@ -199,70 +155,15 @@ impl Game {
 					return true;
 				}
 			}
-			State::Active(clicked) => {
+			State::Active => {
 				if (currMove == 0 && player == 1 || currMove == 2 && player == 2) {
 					self.Move += 1;
 					self.Move %= 4;
 					if (player == 1) {
-						self.setState(x, y, State::Cross(clicked));
+						self.setState(x, y, State::Cross);
 					} else {
-						self.setState(x, y, State::Circle(clicked));
+						self.setState(x, y, State::Circle);
 					}
-					return true;
-				}
-			}
-			_ => {}
-		}
-		false
-	}
-	pub fn undoPlayerClick(&mut self, x: i16, y: i16, player: i8) -> bool {
-		let prevMove = (self.Move + 3) % 4;
-		match (self.getState(x, y)) {
-			State::Active(true) => {
-				if (prevMove == 1 && player == 1 || prevMove == 3 && player == 2) {
-					self.Move = prevMove;
-					self.setState(x, y, State::Activatable);
-
-					for dir in DIR4.iter() {
-						match (self.getState(x + dir.0, y + dir.1)) {
-							State::Active(false) => {
-								self.setState(x + dir.0, y + dir.1, State::Activatable);
-							}
-							State::Activatable => {
-								let mut neighbourInactivate = true;
-								for neighbourDir in DIR4.iter() {
-									match (self.getState(
-										x + dir.0 + neighbourDir.0,
-										y + dir.1 + neighbourDir.1,
-									)) {
-										State::Active(_) | State::Cross(_) | State::Circle(_) => {
-											neighbourInactivate = false;
-											break;
-										}
-										_ => {}
-									}
-								}
-								if (neighbourInactivate) {
-									self.setState(x + dir.0, y + dir.1, State::Inactive);
-								}
-							}
-							_ => {}
-						}
-					}
-					return true;
-				}
-			}
-			State::Cross(clicked) => {
-				if (prevMove == 0 && player == 1) {
-					self.Move = prevMove;
-					self.setState(x, y, State::Active(clicked));
-					return true;
-				}
-			}
-			State::Circle(clicked) => {
-				if (prevMove == 2 && player == 2) {
-					self.Move = prevMove;
-					self.setState(x, y, State::Active(clicked));
 					return true;
 				}
 			}
