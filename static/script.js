@@ -16,7 +16,6 @@ let canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth / 2;
 canvas.height = window.innerHeight;
 let ctx = canvas.getContext("2d");
-let textArea = document.getElementById("text");
 ctx.imageSmoothingEnabled = false;
 let accounts = document.getElementById("account");
 let userId = document.getElementById("userId")
@@ -63,10 +62,10 @@ init().then(async () => {
 			location.reload();
 
 		}
-		const {data, error} = await window.supabase.auth.signInWithOAuth({
+		const {error} = await window.supabase.auth.signInWithOAuth({
 			provider: 'discord',
 			options: {
-				redirectTo: window.location.origin
+				redirectTo: window.location.href
 			}
 		});
 		if (error) {
