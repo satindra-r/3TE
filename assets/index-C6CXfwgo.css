@@ -1,0 +1,1 @@
+body{margin:0;background-color:#202030}#canvas{width:50vw;height:100vh}#container{display:flex;flex-direction:row;align-items:flex-start;column-gap:1vw}#status{color:#fff}#networkPanel{display:flex;flex-direction:column;align-items:flex-start;row-gap:1vh;padding:4vmin}label{color:#fff}
