@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	base: '/3TE/',
 	server: {
 		fs: {
 			allow: ['..']
@@ -10,7 +11,9 @@ export default defineConfig({
 		exclude: ['../pkg/LearningWASM.js']
 	},
 	build: {
-		target: 'esnext'
+		target: 'esnext',
+		outDir: '../dist',
+		emptyOutDir: true
 	},
 	assetsInclude: ['**/*.wasm']
 });

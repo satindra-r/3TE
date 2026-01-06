@@ -111,8 +111,8 @@ export function drawCircle(x, y, s, r, g, b, t) {
 }
 
 export function sendData(message, x, y) {
-	if (supabase) {
-		supabase
+	if (window.supabase) {
+		window.supabase
 			.from("Communication")
 			.insert({
 				userId2: userId2Input.value,

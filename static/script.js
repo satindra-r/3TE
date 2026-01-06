@@ -4,15 +4,13 @@ import init, {
 	handleKeyDown,
 	handleMouseClick,
 	handleDataIn,
-	beginConnection,
-	onDatabaseUpdate,
 } from "../pkg/LearningWASM.js";
 
 import {createClient} from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://rnjrfxqopylbwrpwrors.supabase.co';
 const supabaseKey = 'sb_publishable_O2O2sqesYlfJoHMPSI8Zbg_kysXXK12';
-const supabase = createClient(supabaseUrl, supabaseKey);
+window.supabase = createClient(supabaseUrl, supabaseKey);
 
 let canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth / 2;
@@ -21,6 +19,7 @@ let ctx = canvas.getContext("2d");
 let textArea = document.getElementById("text");
 ctx.imageSmoothingEnabled = false;
 let accounts = document.getElementById("account");
+let userId = document.getElementById("userId")
 let userId2Input = document.getElementById("userId2")
 
 
@@ -30,12 +29,13 @@ init().then(async () => {
 	setHook();
 	render();
 
-	const {data: {user}} = await supabase.auth.getUser();
+	const {data: {user}} = await window.supabase.auth.getUser();
 	if (user) {
 		accounts.textContent = "Log Out";
-		await supabase.from("Communication").delete().neq("id", 0);
+		userId.textContent = "User Id:" + user.id + "📋";
+		await window.supabase.from("Communication").delete().neq("id", 0);
 
-		channel = supabase
+		channel = window.supabase
 			.channel("communication")
 			.on(
 				"postgres_changes",
@@ -48,7 +48,7 @@ init().then(async () => {
 					console.log("New insert:", payload);
 					if (payload.new.user_id2 === user.id) {
 						handleDataIn(payload.new.message, payload.new.x, payload.new.y)
-						await supabase.from("communication").delete().neq("id", 0);
+						await window.supabase.from("communication").delete().neq("id", 0);
 					}
 				}
 			)
@@ -57,11 +57,13 @@ init().then(async () => {
 		accounts.textContent = "Log In";
 	}
 
-	addEventListener("click", async function () {
-		if ((await supabase.auth.getUser()).data) {
-			await supabase.auth.signOut();
+	accounts.addEventListener("click", async function () {
+		if ((await window.supabase.auth.getUser()).data) {
+			await window.supabase.auth.signOut();
+			location.reload();
+
 		}
-		const {data, error} = await supabase.auth.signInWithOAuth({
+		const {data, error} = await window.supabase.auth.signInWithOAuth({
 			provider: 'discord',
 			options: {
 				redirectTo: window.location.origin
@@ -72,10 +74,6 @@ init().then(async () => {
 		}
 	});
 
-	document.getElementById("logOut")?.addEventListener("click", async function () {
-		await supabase.auth.signOut();
-	});
-
 	document.addEventListener("keydown", async function (event) {
 		handleKeyDown(event.key);
 	});
@@ -84,8 +82,11 @@ init().then(async () => {
 		handleMouseClick(event.x, event.y);
 	});
 
+	userId.addEventListener("click", () => {
+		navigator.clipboard.writeText(user.id);
+	});
 	document.getElementById("beginConnection").addEventListener("click", function () {
-		supabase
+		window.supabase
 			.from("Communication")
 			.insert({
 				userId2: userId2Input.value,
@@ -93,10 +94,5 @@ init().then(async () => {
 				x: 0,
 				y: 0
 			})
-	});
-
-	textArea.addEventListener("data", function () {
-		handleDataIn(textArea.value);
-		textArea.value = "";
 	});
 });
