@@ -1,10 +1,7 @@
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
-let textArea = document.getElementById("text");
 let status = document.getElementById("status")
 let userId2Input = document.getElementById("userId2")
-
-let player = -1;
 
 function setDrawColour(r, g, b) {
 	ctx.strokeStyle = "rgb(" + r + "," + g + "," + b + ")";
@@ -110,12 +107,15 @@ export function drawCircle(x, y, s, r, g, b, t) {
 	ctx.stroke();
 }
 
-export function sendData(message, x, y) {
+export async function sendData(message, x, y) {
+	const {data: {user}} = await window.supabase.auth.getUser();
+
 	if (window.supabase) {
-		window.supabase
+		await window.supabase
 			.from("Communication")
 			.insert({
-				userId2: userId2Input.value,
+				user_id: user.id,
+				user_id2: userId2Input.value,
 				message: message,
 				x: x,
 				y: y

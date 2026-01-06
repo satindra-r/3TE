@@ -35,19 +35,19 @@ init().then(async () => {
 		await window.supabase.from("Communication").delete().neq("id", 0);
 
 		channel = window.supabase
-			.channel("communication")
+			.channel("Communication")
 			.on(
 				"postgres_changes",
 				{
 					event: "INSERT",
 					schema: "public",
-					table: "communication"
+					table: "Communication"
 				},
 				async function (payload) {
 					console.log("New insert:", payload);
 					if (payload.new.user_id2 === user.id) {
 						handleDataIn(payload.new.message, payload.new.x, payload.new.y)
-						await window.supabase.from("communication").delete().neq("id", 0);
+						await window.supabase.from("Communication").delete().neq("id", 0);
 					}
 				}
 			)
@@ -84,14 +84,28 @@ init().then(async () => {
 	userId.addEventListener("click", () => {
 		navigator.clipboard.writeText(user.id);
 	});
-	document.getElementById("beginConnection").addEventListener("click", function () {
-		window.supabase
+	document.getElementById("beginConnection").addEventListener("click", async function () {
+		let player = 1;
+
+		const {data: {user}} = await window.supabase.auth.getUser();
+		const {data} = await supabase
+			.from("Communication")
+			.select("user_id, message, x, y")
+			.eq("message", "Join")
+			.eq("user_id2", user.id);
+		if (data) {
+			const {message, x, y} = data[0];
+			handleDataIn(message, x, y);
+			player = 3 - x;
+		}
+		await window.supabase
 			.from("Communication")
 			.insert({
-				userId2: userId2Input.value,
+				user_id: user.id,
+				user_id2: userId2Input.value,
 				message: "Join",
-				x: 0,
+				x: player,
 				y: 0
-			})
+			}).select();
 	});
 });
