@@ -240,10 +240,13 @@ pub fn handleMouseClick(mouseX: i16, mouseY: i16) {
 #[wasm_bindgen]
 pub fn handleDataIn(str: &str, x: i16, y: i16) {
     if (str == "Join") {
-        if (x == 1 || x == 2) {
-            *Player.lock().unwrap() = (3 - x) as i8;
+        if(MAIN_GAME.lock().unwrap().Move == -1) {
+            if (x == 1 || x == 2) {
+                *Player.lock().unwrap() = (3 - x) as i8;
+                sendData("Join", (3 - x), 0);
+                reset();
+            }
         }
-        reset();
     } else if (str == "Move") {
         let currPlayer = *Player.lock().unwrap();
         let validClick = MAIN_GAME
