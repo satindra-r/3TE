@@ -111,7 +111,7 @@ export async function sendData(message, x, y) {
 	const {data: {user}} = await window.supabase.auth.getUser();
 
 	if (window.supabase) {
-		await window.supabase
+		let send = await window.supabase
 			.from("Communication")
 			.insert({
 				user_id: user.id,
@@ -119,7 +119,8 @@ export async function sendData(message, x, y) {
 				message: message,
 				x: x,
 				y: y
-			})
+			}).select()
+		console.log("Sent:" + send[0]);
 	} else {
 		console.log("Cant send message");
 	}
