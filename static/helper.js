@@ -120,7 +120,7 @@ export async function sendData(message, x, y) {
 				x: x,
 				y: y
 			}).select()
-		console.log("Sent:" + data[0]);
+		console.log("New Send:", data[0]);
 	} else {
 		console.log("Cant send message");
 	}
