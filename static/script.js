@@ -93,7 +93,7 @@ init().then(async () => {
 			.select("user_id, message, x, y")
 			.eq("message", "Join")
 			.eq("user_id2", user.id);
-		if (data) {
+		if (data.length) {
 			const {message, x, y} = data[0];
 			handleDataIn(message, x, y);
 			player = 3 - x;
