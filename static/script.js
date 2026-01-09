@@ -57,13 +57,13 @@ init().then(async () => {
 	}
 
 	accounts.addEventListener("click", async function () {
-		if ((await window.supabase.auth.getUser()).data) {
+		if ((await window.supabase.auth.getUser()).data.user) {
 			await window.supabase.auth.signOut();
 			location.reload();
 
 		} else {
 			const {error} = await window.supabase.auth.signInWithOAuth({
-				provider: document.getElementById("auth").value,
+				provider: document.getElementById("auth").value.toLowerCase(),
 				options: {
 					redirectTo: window.location.href
 				}
