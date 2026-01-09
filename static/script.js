@@ -61,15 +61,16 @@ init().then(async () => {
 			await window.supabase.auth.signOut();
 			location.reload();
 
-		}
-		const {error} = await window.supabase.auth.signInWithOAuth({
-			provider: 'discord',
-			options: {
-				redirectTo: window.location.href
+		} else {
+			const {error} = await window.supabase.auth.signInWithOAuth({
+				provider: document.getElementById("auth").value,
+				options: {
+					redirectTo: window.location.href
+				}
+			});
+			if (error) {
+				console.error("Login error:", error);
 			}
-		});
-		if (error) {
-			console.error("Login error:", error);
 		}
 	});
 

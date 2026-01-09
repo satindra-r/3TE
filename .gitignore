@@ -5,3 +5,4 @@ bin/
 wasm-pack.log
 static/node_modules/
 static/package-lock.json
+.idea/
