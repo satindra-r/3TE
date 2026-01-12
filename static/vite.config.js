@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 
 export default defineConfig({
 	base: '/3TE/',
+	publicDir: 'audio',
 	server: {
 		fs: {
 			allow: ['..']
