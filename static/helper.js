@@ -139,5 +139,5 @@ export function setTitle(waiting) {
 }
 
 export function playSFX(file) {
-	new Audio(file).play();
+	new Audio("/3TE/" + file).play();
 }
