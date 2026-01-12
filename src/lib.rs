@@ -23,6 +23,7 @@ extern "C" {
     fn drawCircle(x: i16, y: i16, s: i16, r: u8, g: u8, b: u8, t: i16);
     fn sendData(str: &str, x: i16, y: i16);
     fn setStatus(str: &str);
+    fn setTitle(waiting: bool);
 }
 
 static BOX_SIZE: i16 = 45;
@@ -50,8 +51,10 @@ fn resetState() {
 
     if (*Player.lock().unwrap() == 1) {
         setStatus("New Game Started, Your turn to Place");
+        setTitle(true);
     } else {
         setStatus("New Game Started, Opponent's turn to Place");
+        setTitle(false);
     }
 
     MAIN_GAME.lock().unwrap().resetState();
@@ -185,6 +188,7 @@ pub fn handleKeyDown(key: &str) {
                 if (*OppGameStart.lock().unwrap() == 0) {
                     *PlayerGameStart.lock().unwrap() = 1;
                     setStatus("Waiting for Opponent to Start New Game");
+                    setTitle(false);
                 } else if (*OppGameStart.lock().unwrap() == 1) {
                     MAIN_GAME.lock().unwrap().Move = 0;
                     reset();
@@ -213,9 +217,11 @@ pub fn handleMouseClick(mouseX: i16, mouseY: i16) {
             match currMove {
                 1 | 3 => {
                     setStatus("Your turn to expand");
+                    setTitle(true);
                 }
                 0 | 2 => {
                     setStatus("Opponent's turn to place");
+                    setTitle(false);
                 }
                 _ => {}
             }
@@ -227,6 +233,7 @@ pub fn handleMouseClick(mouseX: i16, mouseY: i16) {
             if (win == currPlayer) {
                 sendData("Win", x, y);
                 setStatus("Your Won, Press Enter to Start a New Game");
+                setTitle(true);
                 *Player.lock().unwrap() = 3 - currPlayer;
 
                 MAIN_GAME.lock().unwrap().Move = -1;
@@ -238,9 +245,21 @@ pub fn handleMouseClick(mouseX: i16, mouseY: i16) {
 }
 
 #[wasm_bindgen]
+pub fn handleResign() {
+    let currPlayer = *Player.lock().unwrap();
+    sendData("Resign", 0, 0);
+    setStatus("You Resigned, Press Enter to Start a New Game");
+    setTitle(true);
+    *Player.lock().unwrap() = 3 - currPlayer;
+    MAIN_GAME.lock().unwrap().Move = -1;
+    *OppGameStart.lock().unwrap() = 0;
+    *PlayerGameStart.lock().unwrap() = 0;
+}
+
+#[wasm_bindgen]
 pub fn handleDataIn(str: &str, x: i16, y: i16) {
     if (str == "Join") {
-        if(MAIN_GAME.lock().unwrap().Move == -1) {
+        if (MAIN_GAME.lock().unwrap().Move == -1) {
             if (x == 1 || x == 2) {
                 *Player.lock().unwrap() = (3 - x) as i8;
                 sendData("Join", (3 - x), 0);
@@ -258,9 +277,11 @@ pub fn handleDataIn(str: &str, x: i16, y: i16) {
             match currMove {
                 1 | 3 => {
                     setStatus("Opponent's turn to expand");
+                    setTitle(false);
                 }
                 0 | 2 => {
                     setStatus("Your turn to place");
+                    setTitle(true);
                 }
                 _ => {}
             }
@@ -271,16 +292,26 @@ pub fn handleDataIn(str: &str, x: i16, y: i16) {
         let win = MAIN_GAME.lock().unwrap().checkWin(x, y);
         if (win == 3 - currPlayer) {
             setStatus("You Lost, Press Enter to Start a New Game");
+            setTitle(true);
             *Player.lock().unwrap() = 3 - currPlayer;
             MAIN_GAME.lock().unwrap().Move = -1;
             *OppGameStart.lock().unwrap() = 0;
             *PlayerGameStart.lock().unwrap() = 0;
         }
+    } else if (str == "Resign") {
+        let currPlayer = *Player.lock().unwrap();
+        setStatus("Opponent Resigned, Press Enter to Start a New Game");
+        setTitle(true);
+        *Player.lock().unwrap() = 3 - currPlayer;
+        MAIN_GAME.lock().unwrap().Move = -1;
+        *OppGameStart.lock().unwrap() = 0;
+        *PlayerGameStart.lock().unwrap() = 0;
     } else if (str == "Start") {
         if (MAIN_GAME.lock().unwrap().Move == -1) {
             if (*PlayerGameStart.lock().unwrap() == 0) {
                 *OppGameStart.lock().unwrap() = 1;
                 setStatus("Opponent is waiting for you to Start New Game, Press Enter to Start a New Game");
+                setTitle(true);
             } else if (*PlayerGameStart.lock().unwrap() == 1) {
                 MAIN_GAME.lock().unwrap().Move = 0;
                 reset();

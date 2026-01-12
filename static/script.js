@@ -3,6 +3,7 @@ import init, {
 	render,
 	handleKeyDown,
 	handleMouseClick,
+	handleResign,
 	handleDataIn,
 } from "../pkg/LearningWASM.js";
 
@@ -21,6 +22,7 @@ let accounts = document.getElementById("account");
 let userId = document.getElementById("userId")
 let userId2Input = document.getElementById("userId2")
 
+let chain = Promise.resolve();
 
 let channel = null;
 
@@ -31,9 +33,8 @@ init().then(async () => {
 	const {data: {user}} = await window.supabase.auth.getUser();
 	if (user) {
 		accounts.textContent = "Log Out";
-		userId.textContent = "User Id:" + user.id + "📋";
+		userId.textContent = "User Id: " + user.id;
 		await window.supabase.from("Communication").delete().neq("id", 0);
-
 		channel = window.supabase
 			.channel("Communication")
 			.on(
@@ -42,13 +43,14 @@ init().then(async () => {
 					event: "INSERT",
 					schema: "public",
 					table: "Communication"
-				},
-				async function (payload) {
-					console.log("New insert:", payload);
-					if (payload.new.user_id2 === user.id) {
-						handleDataIn(payload.new.message, payload.new.x, payload.new.y)
-						await window.supabase.from("Communication").delete().neq("id", 0);
-					}
+				}, payload => {
+					chain = chain.then(async () => {
+						console.log("New insert:", payload);
+						if (payload.new.user_id2 === user.id && payload.new.user_id === userId2Input.value) {
+							handleDataIn(payload.new.message, payload.new.x, payload.new.y)
+							await window.supabase.from("Communication").delete().neq("id", 0);
+						}
+					});
 				}
 			)
 			.subscribe();
@@ -82,8 +84,10 @@ init().then(async () => {
 		handleMouseClick(event.x, event.y);
 	});
 
-	userId.addEventListener("click", () => {
-		navigator.clipboard.writeText(user.id);
+	document.getElementById("copy").addEventListener("click", () => {
+		if (user.id) {
+			navigator.clipboard.writeText(user.id);
+		}
 	});
 	document.getElementById("beginConnection").addEventListener("click", async function () {
 		let player = 1;
@@ -91,9 +95,10 @@ init().then(async () => {
 		const {data: {user}} = await window.supabase.auth.getUser();
 		const {data} = await supabase
 			.from("Communication")
-			.select("user_id, message, x, y")
+			.select("message, x, y")
 			.eq("message", "Join")
-			.eq("user_id2", user.id);
+			.eq("user_id2", user.id)
+			.eq("user_id", userId2Input.value);
 		if (data.length) {
 			const {message, x, y} = data[0];
 			handleDataIn(message, x, y);
@@ -108,5 +113,8 @@ init().then(async () => {
 				x: player,
 				y: 0
 			}).select();
+	});
+	document.getElementById("resign").addEventListener("click", async function () {
+		handleResign();
 	});
 });

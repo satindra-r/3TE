@@ -7,6 +7,8 @@ export function handleKeyDown(key: string): void;
 
 export function handleMouseClick(mouseX: number, mouseY: number): void;
 
+export function handleResign(): void;
+
 export function render(): void;
 
 export function setHook(): void;
@@ -18,6 +20,7 @@ export interface InitOutput {
   readonly handleDataIn: (a: number, b: number, c: number, d: number) => void;
   readonly handleKeyDown: (a: number, b: number) => void;
   readonly handleMouseClick: (a: number, b: number) => void;
+  readonly handleResign: () => void;
   readonly render: () => void;
   readonly setHook: () => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;

@@ -4,6 +4,7 @@ export const memory: WebAssembly.Memory;
 export const handleDataIn: (a: number, b: number, c: number, d: number) => void;
 export const handleKeyDown: (a: number, b: number) => void;
 export const handleMouseClick: (a: number, b: number) => void;
+export const handleResign: () => void;
 export const render: () => void;
 export const setHook: () => void;
 export const __wbindgen_free: (a: number, b: number, c: number) => void;

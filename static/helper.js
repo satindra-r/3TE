@@ -129,3 +129,11 @@ export async function sendData(message, x, y) {
 export function setStatus(data) {
 	status.textContent = data;
 }
+
+export function setTitle(waiting) {
+	if (waiting) {
+		document.title = "● 3TE";
+	} else {
+		document.title = "3TE"
+	}
+}

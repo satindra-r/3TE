@@ -1,4 +1,4 @@
-import { fill3DRect, print, sendData, setStatus } from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
+import { fill3DRect, print, sendData, setStatus, setTitle } from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
 import * as __wbg_star0 from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
 
 let wasm;
@@ -118,6 +118,10 @@ export function handleMouseClick(mouseX, mouseY) {
     wasm.handleMouseClick(mouseX, mouseY);
 }
 
+export function handleResign() {
+    wasm.handleResign();
+}
+
 export function render() {
     wasm.render();
 }
@@ -187,6 +191,9 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbg_setStatus_a8687e579970fac3 = function(arg0, arg1) {
         setStatus(getStringFromWasm0(arg0, arg1));
+    };
+    imports.wbg.__wbg_setTitle_967686377daf5df0 = function(arg0) {
+        setTitle(arg0 !== 0);
     };
     imports.wbg.__wbg_stack_0ed75d68575b0f3c = function(arg0, arg1) {
         const ret = arg1.stack;
