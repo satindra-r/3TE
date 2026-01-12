@@ -5,12 +5,21 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -18,18 +27,14 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: |
-          cd static
-          npm install
+        run: cd static && npm install
 
       - name: Build
-        run: |
-          cd static
-          npm run build
+        run: cd static && npm run build
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./static/dist
+          publish_dir: ./dist
           publish_branch: gh-pages
