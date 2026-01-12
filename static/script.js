@@ -23,7 +23,7 @@ let accounts = document.getElementById("account");
 let userId = document.getElementById("userId")
 let userId2Input = document.getElementById("userId2")
 
-let chain = Promise.resolve();
+let chainInput = Promise.resolve();
 
 let channel = null;
 
@@ -45,7 +45,7 @@ init().then(async () => {
 					schema: "public",
 					table: "Communication"
 				}, payload => {
-					chain = chain.then(async () => {
+					chainInput = chainInput.then(async () => {
 						console.log("New insert:", payload);
 						if (payload.new.user_id2 === user.id && payload.new.user_id === userId2Input.value) {
 							handleDataIn(payload.new.message, payload.new.x, payload.new.y)

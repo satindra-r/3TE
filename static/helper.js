@@ -3,6 +3,9 @@ let ctx = canvas.getContext("2d");
 let status = document.getElementById("status")
 let userId2Input = document.getElementById("userId2")
 
+
+let chainSend = Promise.resolve();
+
 function setDrawColour(r, g, b) {
 	ctx.strokeStyle = "rgb(" + r + "," + g + "," + b + ")";
 }
@@ -108,22 +111,23 @@ export function drawCircle(x, y, s, r, g, b, t) {
 }
 
 export async function sendData(message, x, y) {
-	const {data: {user}} = await window.supabase.auth.getUser();
-
-	if (window.supabase) {
-		const {data} = await window.supabase
-			.from("Communication")
-			.insert({
-				user_id: user.id,
-				user_id2: userId2Input.value,
-				message: message,
-				x: x,
-				y: y
-			}).select()
-		console.log("New Send:", data[0]);
-	} else {
-		console.log("Cant send message");
-	}
+	chainSend = chainSend.then(async () => {
+		const {data: {user}} = await window.supabase.auth.getUser();
+		if (window.supabase) {
+			const {data} = await window.supabase
+				.from("Communication")
+				.insert({
+					user_id: user.id,
+					user_id2: userId2Input.value,
+					message: message,
+					x: x,
+					y: y
+				}).select()
+			console.log("New Send:", data[0]);
+		} else {
+			console.log("Cant send message");
+		}
+	});
 }
 
 export function setStatus(data) {
