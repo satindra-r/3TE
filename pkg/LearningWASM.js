@@ -1,4 +1,4 @@
-import { fill3DRect, print, sendData, setStatus, setTitle } from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
+import { fill3DRect, playSFX, print, sendData, setStatus, setTitle } from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
 import * as __wbg_star0 from './snippets/LearningWASM-6f958a70a1b921fe/static/helper.js';
 
 let wasm;
@@ -182,6 +182,9 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_new_8a6f238a6ece86ea = function() {
         const ret = new Error();
         return ret;
+    };
+    imports.wbg.__wbg_playSFX_cb226411dacaf298 = function(arg0, arg1) {
+        playSFX(getStringFromWasm0(arg0, arg1));
     };
     imports.wbg.__wbg_print_7f11528d65c531e3 = function(arg0, arg1) {
         print(getStringFromWasm0(arg0, arg1));

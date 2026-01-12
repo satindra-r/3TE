@@ -137,3 +137,7 @@ export function setTitle(waiting) {
 		document.title = "3TE"
 	}
 }
+
+export function playSFX(file) {
+	new Audio(file).play();
+}

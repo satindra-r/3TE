@@ -24,6 +24,7 @@ extern "C" {
     fn sendData(str: &str, x: i16, y: i16);
     fn setStatus(str: &str);
     fn setTitle(waiting: bool);
+    fn playSFX(file: &str);
 }
 
 static BOX_SIZE: i16 = 45;
@@ -159,6 +160,7 @@ pub fn render() {
 }
 
 fn reset() {
+    playSFX("reset.mp3");
     resetState();
     render();
 }
@@ -182,13 +184,14 @@ pub fn handleKeyDown(key: &str) {
             *OffsetX.lock().unwrap() = 0;
             *OffsetY.lock().unwrap() = 0;
         }
-        "Enter" => {
+        "Shift" => {
             if (MAIN_GAME.lock().unwrap().Move == -1) {
                 sendData("Start", 0, 0);
                 if (*OppGameStart.lock().unwrap() == 0) {
                     *PlayerGameStart.lock().unwrap() = 1;
                     setStatus("Waiting for Opponent to Start New Game");
                     setTitle(false);
+                    playSFX("click.mp3");
                 } else if (*OppGameStart.lock().unwrap() == 1) {
                     MAIN_GAME.lock().unwrap().Move = 0;
                     reset();
@@ -232,13 +235,15 @@ pub fn handleMouseClick(mouseX: i16, mouseY: i16) {
             let win = MAIN_GAME.lock().unwrap().checkWin(x, y);
             if (win == currPlayer) {
                 sendData("Win", x, y);
-                setStatus("Your Won, Press Enter to Start a New Game");
+                setStatus("Your Won, Press Shift to Start a New Game");
                 setTitle(true);
+                playSFX("finish.mp3");
                 *Player.lock().unwrap() = 3 - currPlayer;
-
                 MAIN_GAME.lock().unwrap().Move = -1;
                 *OppGameStart.lock().unwrap() = 0;
                 *PlayerGameStart.lock().unwrap() = 0;
+            }else{
+                playSFX("click.mp3");
             }
         }
     }
@@ -248,8 +253,9 @@ pub fn handleMouseClick(mouseX: i16, mouseY: i16) {
 pub fn handleResign() {
     let currPlayer = *Player.lock().unwrap();
     sendData("Resign", 0, 0);
-    setStatus("You Resigned, Press Enter to Start a New Game");
+    setStatus("You Resigned, Press Shift to Start a New Game");
     setTitle(true);
+    playSFX("finish.mp3");
     *Player.lock().unwrap() = 3 - currPlayer;
     MAIN_GAME.lock().unwrap().Move = -1;
     *OppGameStart.lock().unwrap() = 0;
@@ -278,10 +284,12 @@ pub fn handleDataIn(str: &str, x: i16, y: i16) {
                 1 | 3 => {
                     setStatus("Opponent's turn to expand");
                     setTitle(false);
+                    playSFX("click.mp3");
                 }
                 0 | 2 => {
                     setStatus("Your turn to place");
                     setTitle(true);
+                    playSFX("click.mp3");
                 }
                 _ => {}
             }
@@ -291,8 +299,9 @@ pub fn handleDataIn(str: &str, x: i16, y: i16) {
         let currPlayer = *Player.lock().unwrap();
         let win = MAIN_GAME.lock().unwrap().checkWin(x, y);
         if (win == 3 - currPlayer) {
-            setStatus("You Lost, Press Enter to Start a New Game");
+            setStatus("You Lost, Press Shift to Start a New Game");
             setTitle(true);
+            playSFX("finish.mp3");
             *Player.lock().unwrap() = 3 - currPlayer;
             MAIN_GAME.lock().unwrap().Move = -1;
             *OppGameStart.lock().unwrap() = 0;
@@ -300,8 +309,9 @@ pub fn handleDataIn(str: &str, x: i16, y: i16) {
         }
     } else if (str == "Resign") {
         let currPlayer = *Player.lock().unwrap();
-        setStatus("Opponent Resigned, Press Enter to Start a New Game");
+        setStatus("Opponent Resigned, Press Shift to Start a New Game");
         setTitle(true);
+        playSFX("finish.mp3");
         *Player.lock().unwrap() = 3 - currPlayer;
         MAIN_GAME.lock().unwrap().Move = -1;
         *OppGameStart.lock().unwrap() = 0;
@@ -310,8 +320,9 @@ pub fn handleDataIn(str: &str, x: i16, y: i16) {
         if (MAIN_GAME.lock().unwrap().Move == -1) {
             if (*PlayerGameStart.lock().unwrap() == 0) {
                 *OppGameStart.lock().unwrap() = 1;
-                setStatus("Opponent is waiting for you to Start New Game, Press Enter to Start a New Game");
+                setStatus("Opponent is waiting for you to Start New Game, Press Shift to Start a New Game");
                 setTitle(true);
+                playSFX("click.mp3")
             } else if (*PlayerGameStart.lock().unwrap() == 1) {
                 MAIN_GAME.lock().unwrap().Move = 0;
                 reset();

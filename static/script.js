@@ -8,6 +8,7 @@ import init, {
 } from "../pkg/LearningWASM.js";
 
 import {createClient} from '@supabase/supabase-js';
+import {playSFX} from "./helper.js";
 
 const supabaseUrl = 'https://rnjrfxqopylbwrpwrors.supabase.co';
 const supabaseKey = 'sb_publishable_O2O2sqesYlfJoHMPSI8Zbg_kysXXK12';
@@ -87,6 +88,7 @@ init().then(async () => {
 	document.getElementById("copy").addEventListener("click", () => {
 		if (user.id) {
 			navigator.clipboard.writeText(user.id);
+			playSFX("reset.mp3");
 		}
 	});
 	document.getElementById("beginConnection").addEventListener("click", async function () {
@@ -103,6 +105,7 @@ init().then(async () => {
 			const {message, x, y} = data[0];
 			handleDataIn(message, x, y);
 			player = 3 - x;
+			playSFX("reset.mp3");
 		}
 		await window.supabase
 			.from("Communication")
